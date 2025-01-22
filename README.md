@@ -4,14 +4,18 @@ https://open-meteo.com/en/docs
 
 Feel free to use the parameters of your choice.
 
+# Extensions/Questions
+
+- How would you orchestrate this process in a production environment?
+- What things can/will you do to make our job of evaluating your solution easier?
+- What abstractions can you introduce to make this process generic?
+
 # Notes
 
+- You can use AI tools if you deem it appropriate. If you do, just specify in your notes how you utilised them.
 - The script will be called with some frequency frequently to ingest the latest data from the API. E.g. hourly, daily
-- How would you orchestrate this process in a production environment?
 - The state of the data at the time the API was called might be useful.
-- It might be a nice feature if the script could be genericised in some way to work for any API
 - Some API’s might produce a lot of data, what are good ways of storing this data in ways that will scale well over time
-- What things can you do to make my job of evaluating your solution easier?
 - Decide how much time you want to spend on this solution, and please add a comment/note somewhere to let me know how much time you did spend on it.
 
 # Submitting your solution
