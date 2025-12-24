@@ -1,0 +1,48 @@
+# Open-Meteo API specific configurations
+
+# API Settings
+api:
+  name: "open-meteo"
+  base_url: "https://api.open-meteo.com/v1/forecast"
+  timeout_seconds: 30
+  max_concurrent_requests: 5
+
+# Forecast Parameters
+forecast:
+  intervals: # List of forecast intervals to fetch 
+  - "hourly"
+  - "daily"
+  days: 7 # Number of days to forecast
+  timezone: "UTC" # Options: "UTC", "auto", or specific timezone like "America/New_York"
+
+  # Variables per interval
+  variables:
+    hourly:
+      - "temperature_2m"
+      - "precipitation"
+      - "windspeed_10m"
+    daily:
+      - "temperature_2m_max"
+      - "temperature_2m_min"
+      - "precipitation_sum"
+
+  # Locations to fetch forecasts for - specify name and coordinates (latitude, longitude)
+locations:
+  - name: "London"
+    latitude: 51.5074
+    longitude: -0.1278
+  - name: "Tokyo"
+    latitude: 35.6895
+    longitude: 139.6917
+  - name: "Sydney"
+    latitude: -33.8688
+    longitude: 151.2093
+  - name: "New York"
+    latitude: 40.7128
+    longitude: -74.0060
+  - name: "Cairo"
+    latitude: 30.0444
+    longitude: 31.2357
+  - name: "Rio de Janeiro"
+    latitude: -22.9068
+    longitude: -43.1729

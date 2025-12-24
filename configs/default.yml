@@ -1,0 +1,10 @@
+# Default pipeline configurations
+
+# Storage Settings
+storage:
+  backend: "local"
+  base_path: "./data"
+  compression: "zstd" # Options: "none", "gzip", "zstd" - zstd offers good balance
+
+# Timezone
+timezone: "UTC"
