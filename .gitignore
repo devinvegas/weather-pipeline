@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 # data inside notebooks directory
-notebooks/data/**/*
+notebooks/data/*
