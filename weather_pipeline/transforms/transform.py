@@ -101,7 +101,7 @@ def transform_daily(result: FetchResult, run_id: str | None = None) -> pl.DataFr
     return df
 
 
-def _get_partition_path_single(
+def get_partition_path(
     location_name: str, interval: str, ingestion_timestamp: str
 ) -> str:
     """Generate partition path for storage.
@@ -111,23 +111,3 @@ def _get_partition_path_single(
     dt = datetime.fromisoformat(ingestion_timestamp.replace("Z", "+00:00"))
     date_str = dt.strftime("%Y-%m-%d")
     return f"{interval}/{location_name}/{date_str}"
-
-
-def get_partition_paths(df: pl.DataFrame, interval: str) -> list[str]:
-    """Generate partition paths for multiple locations in a DataFrame.
-
-    Returns unique paths for each location/date combination.
-    Format: {interval}/location={name}/date={YYYY-MM-DD}/
-    """
-    partition_data = df.select(["location_name", "ingestion_timestamp_utc"]).unique()
-
-    paths = []
-    for row in partition_data.iter_rows(named=True):
-        path = _get_partition_path_single(
-            location_name=row["location_name"],
-            interval=interval,
-            ingestion_timestamp=row["ingestion_timestamp_utc"],
-        )
-        paths.append(path)
-
-    return paths
