@@ -126,9 +126,12 @@ def get_partition_path(
     run_uuid: str,
     ingestion_timestamp: str
 ) -> str:
-    """Generate partition path for storage.
+    """Generate partition path with semantic filenames based on interval type.
 
-    Format: {provider}/{interval}/{location_name}/{YYYY-MM-DD}/{run_uuid}.parquet
+    Format: {provider}/{interval}/{location}/{YYYY}/{MM}/{DD}/{semantic_filename}.parquet
+    
+    - Daily: forecast_{YYYYMMDD}.parquet (single canonical file per day)
+    - Hourly: forecast_{YYYYMMDD}_{HH}h_{run_uuid}.parquet (multiple per day, UUID for uniqueness)
     
     Args:
         provider: API provider name (e.g., "open_meteo")
@@ -138,5 +141,17 @@ def get_partition_path(
         ingestion_timestamp: ISO format timestamp string
     """
     dt = datetime.fromisoformat(ingestion_timestamp.replace("Z", "+00:00"))
-    date_str = dt.strftime("%Y-%m-%d")
-    return f"{provider}/{interval}/{location_name}/{date_str}/{run_uuid}.parquet"
+    year = dt.strftime("%Y")
+    month = dt.strftime("%m")
+    day = dt.strftime("%d")
+    
+    # Semantic filename based on interval type
+    if interval == "daily":
+        # Daily forecasts: date-based naming, single canonical file per day
+        filename = f"forecast_{year}{month}{day}.parquet"
+    else:
+        # Hourly forecasts: include hour and UUID for multiple runs per day
+        hour = dt.strftime("%H")
+        filename = f"forecast_{year}{month}{day}_{hour}h_{run_uuid}.parquet"
+    
+    return f"{provider}/{interval}/{location_name}/{year}/{month}/{day}/{filename}"
