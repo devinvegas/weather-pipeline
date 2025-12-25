@@ -1,6 +1,5 @@
 """Parquet writer implementation."""
 
-from datetime import datetime
 from pathlib import Path
 
 import polars as pl
@@ -21,18 +20,19 @@ class ParquetWriter:
         self.compression = compression
 
     def write(self, df: pl.DataFrame, partition_path: str) -> WriteResult:
-        """Write DataFrame to a single Parquet file."""
-
+        """Write DataFrame to a single Parquet file.
+        
+        Args:
+            df: DataFrame to write
+            partition_path: Full path including filename (e.g., provider/interval/location/YYYY/MM/DD/forecast_*.parquet)
+        """
         # Build full path
         full_path = self.base_path / partition_path
-        full_path.mkdir(parents=True, exist_ok=True)
+        
+        # Create parent directories
+        full_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Generate unique filename
-        timestamp = datetime.now().strftime("%Y%m%dT%H%M%SZ")
-        filename = f"data_{timestamp}.parquet"
-        full_path = full_path / filename
-
-        # Write with compression
+        # Write with compression (partition_path already includes filename)
         df.write_parquet(
             full_path, compression=self.compression
         )
