@@ -13,7 +13,7 @@ from weather_pipeline.transforms import transform_hourly, transform_daily
 from weather_pipeline.writers import ParquetWriter
 
 
-async def run_pipeline(config: PipelineConfig) -> PipelineResult:
+async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     """Run the ingestion pipeline asynchronously."""
 
     run_id = str(uuid.uuid4())
@@ -102,10 +102,10 @@ async def run_pipeline(config: PipelineConfig) -> PipelineResult:
 
 def run_pipeline(config: PipelineConfig) -> PipelineResult:
     """Synchronous wrapper to run the async pipeline."""
-    return asyncio.run(run_pipeline(config))
+    return asyncio.run(run_pipeline_async(config))
 
 
 async def run_from_config_path(config_path: str) -> PipelineResult:
     """Load config and run pipeline asynchronously."""
     config = load_config_yml(config_path=config_path)
-    return await run_pipeline(config)
+    return await run_pipeline_async(config)
