@@ -9,7 +9,7 @@ from typing import Literal
 
 def load_config_yml(
         config_path: str | None = None,
-        default_path: str = "config/default.yaml"
+        default_path: str = "configs/default.yml"
         ) -> PipelineConfig:
         """Load configuration from a YAML file with Pydantic validation.
 

@@ -6,3 +6,4 @@ from .openmeteo import OpenMeteoClient
 __all__ = [
     "DataSourceClient",
     "OpenMeteoClient",
+]
