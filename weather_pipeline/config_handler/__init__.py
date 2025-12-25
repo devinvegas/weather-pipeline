@@ -1,10 +1,9 @@
 """Config-handler package."""
 
-from .loader import load_config_yml, get_default_config, PipelineConfig, APIConfig, StorageConfig
+from .load_configs import load_config_yml,  PipelineConfig, APIConfig, StorageConfig
 
 __all__ = [
     "load_config_yml",
-    "get_default_config",
     "PipelineConfig",
     "APIConfig",
     "StorageConfig",

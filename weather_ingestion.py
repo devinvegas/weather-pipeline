@@ -10,7 +10,7 @@ Usage:
 
 import sys
 
-from weather_pipeline.config_handler import load_config_yml
+from weather_pipeline.config_handler.load_configs import load_config_yml
 from weather_pipeline.pipeline import run_pipeline
 
 def main(config_path: str | None = None)-> int:

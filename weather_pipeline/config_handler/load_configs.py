@@ -58,7 +58,7 @@ class PipelineConfig(BaseModel):
 
     api: APIConfig = Field(default_factory=APIConfig)
     locations: list[Location]
-    interval: str = Literal["hourly", "daily"] = "hourly"
+    interval: Literal["hourly", "daily"] = "hourly"
     hourly_params: list[str] = Field(default_factory=list)
     daily_params: list[str] = Field(default_factory=list)
     forecast_days: int = 7
