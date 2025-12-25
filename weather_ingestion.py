@@ -32,10 +32,10 @@ def main(config_path: str) -> int:
 
         # Reporting
         if result.success:
-            print(f"\n✓ Pipeline succeeded: {result.records_processed} records written")
+            print(f"\n[SUCCESS] Pipeline succeeded: {result.records_processed} records written")
             return 0
         else:
-            print(f"\n✗ Pipeline failed: {result.error}")
+            print(f"\n[FAILED] Pipeline failed: {result.error}")
             return 1
         
     except FileNotFoundError as e:

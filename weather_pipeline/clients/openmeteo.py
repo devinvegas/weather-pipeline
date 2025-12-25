@@ -13,6 +13,7 @@ from weather_pipeline.models import (
     FetchResult,
     FetchError,
 )
+from weather_pipeline.state import JsonStateStore
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,7 @@ class OpenMeteoClient:
             daily_params: list[str] | None = None,
             max_retries: int = 3,
             backoff_factor: float = 2.0,
+            state_store: JsonStateStore | None = None,
               
     ):
         
@@ -54,6 +56,7 @@ class OpenMeteoClient:
             self.timezone = timezone
             self.max_retries = max_retries
             self.backoff_factor = backoff_factor
+            self.state_store = state_store or JsonStateStore()
             self._semaphore = asyncio.Semaphore(max_concurrent_requests)
 
     def _build_params(self, location: Location) -> dict:
