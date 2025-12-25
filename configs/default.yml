@@ -8,3 +8,8 @@ storage:
 
 # Timezone
 timezone: "GMT"
+
+# Retry Settings (for transient API failures)
+api:
+  max_retries: 3           # Number of retry attempts for transient failures
+  retry_backoff_factor: 2.0  # Exponential backoff multiplier (waits 1s, 2s, 4s...)

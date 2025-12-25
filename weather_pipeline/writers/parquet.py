@@ -43,7 +43,11 @@ class ParquetWriter:
         )
     
     def write_partitioned(
-        self, df: pl.DataFrame, interval: str, provider: str, run_uuid: str
+        self, 
+        df: pl.DataFrame, 
+        interval: str, 
+        provider: str, 
+        run_uuid: str
     ) -> list[WriteResult]:
         """Write DataFrame partitioned by location.
         

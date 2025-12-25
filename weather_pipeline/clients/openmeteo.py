@@ -1,6 +1,7 @@
 """OpenMeteo API client implementation."""
 
 import asyncio
+import logging
 from datetime import datetime, timezone
 
 import httpx
@@ -11,13 +12,23 @@ from weather_pipeline.models import (
     APIMetadata,
     FetchResult,
     FetchError,
-)  
+)
+
+logger = logging.getLogger(__name__)
+
+# Transient errors that should trigger a retry
+RETRYABLE_EXCEPTIONS = (
+    httpx.TimeoutException,
+    httpx.ConnectError,
+    httpx.ReadError,
+    httpx.WriteError,
+)
 
 
 class OpenMeteoClient:
     """Client for OpenMeteo weather API.
     
-    Implements the DataSourceClient protocol.
+    Implements the DataSourceClient protocol with retry logic for transient failures.
     """
 
     def __init__(
@@ -29,6 +40,8 @@ class OpenMeteoClient:
             timezone: str,
             hourly_params: list[str] | None = None,
             daily_params: list[str] | None = None,
+            max_retries: int = 3,
+            backoff_factor: float = 2.0,
               
     ):
         
@@ -39,6 +52,8 @@ class OpenMeteoClient:
             self.daily_params = daily_params
             self.forecast_days = forecast_days
             self.timezone = timezone
+            self.max_retries = max_retries
+            self.backoff_factor = backoff_factor
             self._semaphore = asyncio.Semaphore(max_concurrent_requests)
 
     def _build_params(self, location: Location) -> dict:
@@ -95,13 +110,47 @@ class OpenMeteoClient:
             api_metadata=api_metadata,
         )
     
+    async def _fetch_with_retry(self, location: Location) -> FetchResult:
+        """Fetch data with exponential backoff retry for transient failures.
+        
+        Args:
+            location: Location to fetch data for
+            
+        Returns:
+            FetchResult on success
+            
+        Raises:
+            Exception: If all retries are exhausted
+        """
+        last_exception = None
+        
+        for attempt in range(self.max_retries):
+            try:
+                return await self._fetch_single(location)
+            except RETRYABLE_EXCEPTIONS as e:
+                last_exception = e
+                if attempt < self.max_retries - 1:
+                    wait_time = self.backoff_factor ** attempt
+                    logger.warning(
+                        f"Transient error for {location.name}: {e}. "
+                        f"Retry {attempt + 1}/{self.max_retries} after {wait_time:.1f}s"
+                    )
+                    await asyncio.sleep(wait_time)
+                else:
+                    logger.error(
+                        f"All {self.max_retries} retries exhausted for {location.name}: {e}"
+                    )
+        
+        # All retries exhausted
+        raise last_exception
+    
     async def _fetch_with_semaphore(
               self, location: Location
     ) -> FetchResult | FetchError:
-        """Fetch data with concurrency limiting and error handling."""
+        """Fetch data with concurrency limiting, retry logic, and error handling."""
         async with self._semaphore:
             try:
-                return await self._fetch_single(location)
+                return await self._fetch_with_retry(location)
             except Exception as e:
                 return FetchError(location=location, error=str(e))
             

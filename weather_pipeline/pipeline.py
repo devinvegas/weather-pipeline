@@ -23,7 +23,7 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     logging.info(f" Locations to process: {[loc.name for loc in config.locations]}")
     logging.info(f" Interval: {config.interval}")
 
-    # Initialize clinet
+    # Initialize client with retry settings from config
     open_meteo_client = OpenMeteoClient(
         base_url=config.api.base_url,
         timeout=config.api.timeout_seconds,
@@ -32,6 +32,8 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
         daily_params=config.daily_params if config.interval == "daily" else None,
         forecast_days=config.forecast_days,
         timezone=config.timezone,
+        max_retries=config.api.max_retries,
+        backoff_factor=config.api.retry_backoff_factor,
     )
 
     # Initialize writer

@@ -49,6 +49,8 @@ class APIConfig(BaseModel):
     base_url: str = "https://api.open-meteo.com/v1/forecast"
     timeout_seconds: int = 30
     max_concurrent_requests: int = 5
+    max_retries: int = 3
+    retry_backoff_factor: float = 2.0
 
 class StorageConfig(BaseModel):
     """Storage Configuration"""
