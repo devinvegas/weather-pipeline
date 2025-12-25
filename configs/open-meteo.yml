@@ -31,7 +31,7 @@ locations:
 # Forecast configuration (flattened to match PipelineConfig)
 interval: "hourly"  # Changed: removed forecast.intervals, use single value
 forecast_days: 7  # Changed: forecast.days -> forecast_days
-timezone: "UTC"  # Changed: forecast.timezone -> timezone
+timezone: "GMT"  # Changed: forecast.timezone -> timezone
 
 # Variables (flattened)
 hourly_params:  # Changed: forecast.variables.hourly -> hourly_params

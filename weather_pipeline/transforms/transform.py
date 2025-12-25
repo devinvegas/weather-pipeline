@@ -25,16 +25,25 @@ def transform_hourly(result: FetchResult, run_id: str | None = None) -> pl.DataF
     location = result.location
     api_metadata = result.api_metadata
     ingestion_timestamp = result.ingestion_metadata.ingestion_timestamp_utc
+    
+    # Strip timezone info to avoid Polars timezone validation errors
+    if ingestion_timestamp.tzinfo is not None:
+        ingestion_timestamp = ingestion_timestamp.replace(tzinfo=None)
 
     records = []
     for i, time in enumerate(hourly["time"]):
+        # Parse timestamp and strip timezone info to avoid Polars timezone validation errors
+        dt = datetime.fromisoformat(time)
+        if dt.tzinfo is not None:
+            dt = dt.replace(tzinfo=None)
+        
         record = StandardizedWeatherHourly(
             location_name=location.name,
             requested_latitude=location.latitude,
             requested_longitude=location.longitude,
             api_latitude=api_metadata.api_latitude,
             api_longitude=api_metadata.api_longitude,
-            timestamp=datetime.fromisoformat(time),
+            timestamp=dt,
             temperature_2m=hourly.get("temperature_2m", [None] * len(hourly["time"]))[
                 i
             ],
@@ -72,16 +81,25 @@ def transform_daily(result: FetchResult, run_id: str | None = None) -> pl.DataFr
     location = result.location
     api_metadata = result.api_metadata
     ingestion_timestamp = result.ingestion_metadata.ingestion_timestamp_utc
+    
+    # Strip timezone info to avoid Polars timezone validation errors
+    if ingestion_timestamp.tzinfo is not None:
+        ingestion_timestamp = ingestion_timestamp.replace(tzinfo=None)
 
     records = []
     for i, date in enumerate(daily["time"]):
+        # Parse date and strip timezone info to avoid Polars timezone validation errors
+        dt = datetime.fromisoformat(date)
+        if dt.tzinfo is not None:
+            dt = dt.replace(tzinfo=None)
+        
         record = StandardizedWeatherDaily(
             location_name=location.name,
             requested_latitude=location.latitude,
             requested_longitude=location.longitude,
             api_latitude=api_metadata.api_latitude,
             api_longitude=api_metadata.api_longitude,
-            date=datetime.fromisoformat(date),
+            date=dt,
             temperature_2m_max=daily.get(
                 "temperature_2m_max", [None] * len(daily["time"])
             )[i],

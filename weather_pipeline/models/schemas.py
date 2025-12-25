@@ -14,15 +14,15 @@ class Location(BaseModel):
 # Metadata
 class IngestionMetadata(BaseModel):
     """Client-side metadata captured during API calls."""
-    timestamp: datetime
+    ingestion_timestamp_utc: datetime
     request_url: str
     elapsed_ms: float
     status_code: int
 
 class APIMetadata(BaseModel):
     """Metadata returned by weather data API."""
-    latitude: float
-    longitude: float
+    api_latitude: float
+    api_longitude: float
     elevation: float
     generationtime_ms: float
     timezone: str

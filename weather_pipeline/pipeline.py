@@ -8,7 +8,7 @@ import logging
 
 from weather_pipeline.clients import OpenMeteoClient
 from weather_pipeline.config_handler import load_config_yml, PipelineConfig
-from weather_pipeline.models import FetchResult, FetchError, PipelineResult
+from weather_pipeline.models import FetchError, PipelineResult
 from weather_pipeline.transforms import transform_hourly, transform_daily
 from weather_pipeline.writers import ParquetWriter
 
@@ -46,7 +46,7 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     )
 
     # Fetch all locations concurrently
-    results_open_meteo = await open_meteo_client.fetch_all_locations(config.locations)
+    results_open_meteo = await open_meteo_client.fetch_data(config.locations)
 
     # Transform
     dfs = []
@@ -55,7 +55,7 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     for result in results_open_meteo:
         if isinstance(result, FetchError):
             logging.error(
-                f"Fetch error for {result.location.name}: {result.error_message}"
+                f"Fetch error for {result.location.name}: {result.error}"
             )
             failed.append(result)
         else:

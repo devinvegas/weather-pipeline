@@ -25,7 +25,7 @@ def main(config_path: str | None = None)-> int:
       result = run_pipeline(config)
 
       # Reporting
-      if result.sucess:
+      if result.success:
           print(f"\n✓ Pipeline succeeded: {result.records_written} records written")
           return 0
       else:

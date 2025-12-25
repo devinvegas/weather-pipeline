@@ -22,13 +22,14 @@ class OpenMeteoClient:
 
     def __init__(
             self,
-            base_url: str = "https://api.open-meteo.com/v1/forecast",
-            timeout: int = 10,
-            max_concurrent_requests: int = 5,
+            base_url: str,
+            timeout: int,
+            max_concurrent_requests: int,
+            forecast_days: int,
+            timezone: str,
             hourly_params: list[str] | None = None,
             daily_params: list[str] | None = None,
-            forecast_days: int = 7,
-            timezone: str = "UTC",  
+              
     ):
         
             self.base_url = base_url
@@ -72,18 +73,18 @@ class OpenMeteoClient:
         
         # Build metadata
         ingestion_metadata = IngestionMetadata(
-            timestamp=ingestion_timestamp,
+            ingestion_timestamp_utc=ingestion_timestamp,
             request_url=str(response.url),
             elapsed_ms=response.elapsed.total_seconds() * 1000,
             status_code=response.status_code,
         )
 
         api_metadata = APIMetadata(
-            latitude=raw_data.get("latitude"),
-            longitude=raw_data.get("longitude"),
+            api_latitude=raw_data.get("latitude"),
+            api_longitude=raw_data.get("longitude"),
             elevation=raw_data.get("elevation"),
             generationtime_ms=raw_data.get("generationtime_ms"),
-            timezone=raw_data.get("timezone"),
+            timezone=raw_data.get("timezone", "GMT").replace("UTC", "GMT"),  # Map UTC -> GMT for compatibility with Polars
             utc_offset_seconds=raw_data["utc_offset_seconds"],
         )
 
