@@ -1,11 +1,14 @@
 """Parquet writer implementation."""
 
+import logging
 from pathlib import Path
 
 import polars as pl
 
 from weather_pipeline.models import WriteResult
 from weather_pipeline.transforms import get_partition_path
+
+logger = logging.getLogger(__name__)
 
 
 class ParquetWriter:
@@ -36,6 +39,9 @@ class ParquetWriter:
         df.write_parquet(
             full_path, compression=self.compression
         )
+        
+        logger.info(f"Wrote {len(df)} records to {full_path}")
+        
         return WriteResult(
             path=str(full_path),
             records_written=len(df),

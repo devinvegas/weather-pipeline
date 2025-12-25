@@ -8,14 +8,20 @@ Usage:
 """
 
 import sys
+import logging
 
 from weather_pipeline.config_handler.load_configs import load_config_yml
 from weather_pipeline.pipeline import run_pipeline
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
 
 def main(config_path: str) -> int:
     """Main entrypoint for the weather ingestion pipeline."""
-    
     try:
         # Load configs
         config = load_config_yml(config_path=config_path)

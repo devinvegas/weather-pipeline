@@ -12,6 +12,8 @@ from weather_pipeline.models import FetchError, PipelineResult
 from weather_pipeline.transforms import transform_hourly, transform_daily
 from weather_pipeline.writers import ParquetWriter
 
+logger = logging.getLogger(__name__)
+
 
 async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     """Run the ingestion pipeline asynchronously."""
@@ -19,9 +21,9 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     run_id = str(uuid.uuid4())
     run_start = datetime.now(timezone.utc)
 
-    logging.info(f"Pipeline run {run_id} started at {run_start.isoformat()}")
-    logging.info(f" Locations to process: {[loc.name for loc in config.locations]}")
-    logging.info(f" Interval: {config.interval}")
+    logger.info(f"Pipeline run {run_id} started at {run_start.isoformat()}")
+    logger.info(f"Locations to process: {[loc.name for loc in config.locations]}")
+    logger.info(f"Interval: {config.interval}")
 
     # Initialize client with retry settings from config
     open_meteo_client = OpenMeteoClient(
@@ -56,18 +58,16 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
 
     for result in results_open_meteo:
         if isinstance(result, FetchError):
-            logging.error(
-                f"Fetch error for {result.location.name}: {result.error}"
-            )
+            logger.error(f"Fetch error for {result.location.name}: {result.error}")
             failed.append(result)
         else:
-            logging.info(f"Transforming data for {result.location.name}")
+            logger.info(f"Transforming data for {result.location.name}")
             df = transform_func_open_meteo(result, run_id=run_id)
             dfs.append(df)
-            logging.info(f"  ✓ {result.location.name}: {len(df)} records")
+            logger.info(f"  ✓ {result.location.name}: {len(df)} records")
 
     if not dfs:
-        logging.error("No data fetched successfully. Exiting pipeline.")
+        logger.error("No data fetched successfully. Exiting pipeline.")
         return PipelineResult(
             success=False,
             run_id=run_id,
@@ -91,12 +91,11 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
 
     run_end = datetime.now(timezone.utc)
 
-    print(f"\nPipeline complete:")
-    logging.info(f"  Run ID: {run_id}")
-    logging.info(f"  Duration: {(run_end - run_start).total_seconds():.2f}s")
-    logging.info(f"  Total Records Written: {total_records_written}")
-    logging.info(f"  Files written: {len(write_results)}")
-    logging.info(f"  Failed Fetches: {len(failed)}")
+    logger.info(f"Pipeline complete - Run ID: {run_id}")
+    logger.info(f"Duration: {(run_end - run_start).total_seconds():.2f}s")
+    logger.info(f"Total Records Written: {total_records_written}")
+    logger.info(f"Files written: {len(write_results)}")
+    logger.info(f"Failed Fetches: {len(failed)}")
 
     return PipelineResult(
         success=True,

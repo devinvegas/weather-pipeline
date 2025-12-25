@@ -1,5 +1,6 @@
 """Transform API responses to standardized format."""
 
+import logging
 from datetime import datetime
 
 import polars as pl
@@ -9,6 +10,8 @@ from weather_pipeline.models import (
     StandardizedWeatherHourly,
     StandardizedWeatherDaily,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def transform_hourly(result: FetchResult, run_id: str | None = None) -> pl.DataFrame:
@@ -25,6 +28,8 @@ def transform_hourly(result: FetchResult, run_id: str | None = None) -> pl.DataF
     location = result.location
     api_metadata = result.api_metadata
     ingestion_timestamp = result.ingestion_metadata.ingestion_timestamp_utc
+    
+    logger.debug(f"Transforming hourly data for {location.name}: {len(hourly['time'])} records")
     
     # Strip timezone info to avoid Polars timezone validation errors
     if ingestion_timestamp.tzinfo is not None:
@@ -81,6 +86,8 @@ def transform_daily(result: FetchResult, run_id: str | None = None) -> pl.DataFr
     location = result.location
     api_metadata = result.api_metadata
     ingestion_timestamp = result.ingestion_metadata.ingestion_timestamp_utc
+    
+    logger.debug(f"Transforming daily data for {location.name}: {len(daily['time'])} records")
     
     # Strip timezone info to avoid Polars timezone validation errors
     if ingestion_timestamp.tzinfo is not None:
