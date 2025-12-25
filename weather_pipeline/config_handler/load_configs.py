@@ -7,37 +7,40 @@ from weather_pipeline.models import Location
 from typing import Literal
 
 
-def load_config_yml(
-        config_path: str | None = None,
-        default_path: str = "configs/default.yml"
-        ) -> PipelineConfig:
+def load_config_yml(config_path: str | None = None) -> PipelineConfig:
         """Load configuration from a YAML file with Pydantic validation.
 
         Merges API-specific configs with default configs.
         """
         # Load Default Configs
+        default_path = Path("configs/default.yml")
         with open (default_path) as f:
-            default_configs = yaml.safe_load(f)
+            default_config = yaml.safe_load(f) or {}
 
         # Merge api=specific configs if provided
-        if config_path and Path(config_path).exists():
+        if config_path:
+              print(f"Loading config from: {config_path}")  # Debug: confirm path
               with open (config_path) as f:
-                  api_specific_configs = yaml.safe_load(f)
-              default_configs = _deep_merge(default_configs, api_specific_configs)
+                  api_specific_configs = yaml.safe_load(f) or {}
 
+            # Merge default values with API-specific overrides
+              config_data = _deep_merge(default_config, api_specific_configs)
+        else:
+             # if no specific config, throw error
+             raise FileNotFoundError("No API-specific config file path provided.")
         # Validate with Pydantic
-        return PipelineConfig(**default_configs)     
+        return PipelineConfig(**config_data)     
 
 
 def _deep_merge(base: dict, override: dict) -> dict:
-    """Recursively merge override into base."""
+    """Recursively merge override into base, override takes precedence."""
     result = base.copy()
     for key, value in override.items():
         if key in result and isinstance(result[key], dict) and isinstance(value, dict):
             result[key] = _deep_merge(result[key], value)
         else:
             result[key] = value
-        return result
+    return result
     
 class APIConfig(BaseModel):
     """API Configuration"""
