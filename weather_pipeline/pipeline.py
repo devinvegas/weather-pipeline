@@ -71,9 +71,9 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
             run_id=run_id,
             run_start=run_start,
             run_end=datetime.now(timezone.utc),
-            total_records_written=0,
+            records_processed=0,
             error="All locations failed to fetch data.",
-            failed_fetches=failed,
+            failed=failed,
         )
 
     all_data_df = pl.concat(dfs)
@@ -81,6 +81,8 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     # Write Partitioned
     write_results = writer_open_meteo.write_partitioned(all_data_df, config.interval)
     total_records_written = sum(r.records_written for r in write_results)
+
+    run_end = datetime.now(timezone.utc)
 
     print(f"\nPipeline complete:")
     logging.info(f"  Run ID: {run_id}")
@@ -94,9 +96,9 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
         run_id=run_id,
         run_start=run_start,
         run_end=run_end,
-        total_records_written=total_records_written,
+        records_processed=total_records_written,
         files=write_results,
-        failed_fetches=failed,
+        failed=failed,
     )
 
 
