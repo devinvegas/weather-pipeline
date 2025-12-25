@@ -43,10 +43,18 @@ class ParquetWriter:
         )
     
     def write_partitioned(
-        self, df: pl.DataFrame, interval: str
+        self, df: pl.DataFrame, interval: str, provider: str, run_uuid: str
     ) -> list[WriteResult]:
         """Write DataFrame partitioned by location.
         
+        Args:
+            df: DataFrame to write
+            interval: "hourly" or "daily"
+            provider: API provider name (e.g., "open_meteo")
+            run_uuid: Pipeline run ID for filename uniqueness
+        
+        Returns:
+            List of WriteResult objects
         """
         results = []
 
@@ -60,8 +68,10 @@ class ParquetWriter:
 
             # Generate partition path
             partition_path = get_partition_path(
+                provider=provider,
                 location_name=location_name,
                 interval=interval,
+                run_uuid=run_uuid,
                 ingestion_timestamp=ingestion_timestamp_str,
             )
 

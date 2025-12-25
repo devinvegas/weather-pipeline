@@ -79,7 +79,12 @@ async def run_pipeline_async(config: PipelineConfig) -> PipelineResult:
     all_data_df = pl.concat(dfs)
 
     # Write Partitioned
-    write_results = writer_open_meteo.write_partitioned(all_data_df, config.interval)
+    write_results = writer_open_meteo.write_partitioned(
+        all_data_df, 
+        config.interval,
+        provider=config.api.provider,
+        run_uuid=run_id
+    )
     total_records_written = sum(r.records_written for r in write_results)
 
     run_end = datetime.now(timezone.utc)

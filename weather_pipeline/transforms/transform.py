@@ -120,12 +120,23 @@ def transform_daily(result: FetchResult, run_id: str | None = None) -> pl.DataFr
 
 
 def get_partition_path(
-    location_name: str, interval: str, ingestion_timestamp: str
+    provider: str,
+    location_name: str,
+    interval: str,
+    run_uuid: str,
+    ingestion_timestamp: str
 ) -> str:
     """Generate partition path for storage.
 
-    Format: {interval}/location={name}/date={YYYY-MM-DD}/
+    Format: {provider}/{interval}/{location_name}/{YYYY-MM-DD}/{run_uuid}.parquet
+    
+    Args:
+        provider: API provider name (e.g., "open_meteo")
+        location_name: Location name
+        interval: "hourly" or "daily"
+        run_uuid: Pipeline run ID for uniqueness
+        ingestion_timestamp: ISO format timestamp string
     """
     dt = datetime.fromisoformat(ingestion_timestamp.replace("Z", "+00:00"))
     date_str = dt.strftime("%Y-%m-%d")
-    return f"{interval}/{location_name}/{date_str}"
+    return f"{provider}/{interval}/{location_name}/{date_str}/{run_uuid}.parquet"

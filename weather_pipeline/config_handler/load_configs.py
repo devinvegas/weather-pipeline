@@ -45,6 +45,7 @@ def _deep_merge(base: dict, override: dict) -> dict:
 class APIConfig(BaseModel):
     """API Configuration"""
 
+    provider: str = "open_meteo"
     base_url: str = "https://api.open-meteo.com/v1/forecast"
     timeout_seconds: int = 30
     max_concurrent_requests: int = 5
@@ -65,6 +66,6 @@ class PipelineConfig(BaseModel):
     hourly_params: list[str] = Field(default_factory=list)
     daily_params: list[str] = Field(default_factory=list)
     forecast_days: int = 7
-    timezone: str = "UTC"
+    timezone: str = "GMT"
     storage: StorageConfig = Field(default_factory=StorageConfig)
 
