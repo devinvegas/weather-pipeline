@@ -29,7 +29,7 @@ locations:
     longitude: -43.1729
 
 # Forecast configuration (flattened to match PipelineConfig)
-interval: "hourly"  # Changed: removed forecast.intervals, use single value
+interval: "daily"  # Changed: removed forecast.intervals, use single value
 forecast_days: 7  # Changed: forecast.days -> forecast_days
 timezone: "GMT"  # Changed: forecast.timezone -> timezone
 
