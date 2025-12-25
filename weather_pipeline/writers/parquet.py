@@ -54,14 +54,15 @@ class ParquetWriter:
             # Filter DataFrame for this location
             location_df = df.filter(pl.col("location_name") == location_name)
 
-            # Get ingestion timestamp from first row
+            # Get ingestion timestamp from first row and convert to ISO string
             ingestion_timestamp = location_df["ingestion_timestamp_utc"][0]
+            ingestion_timestamp_str = ingestion_timestamp.isoformat()
 
             # Generate partition path
             partition_path = get_partition_path(
                 location_name=location_name,
                 interval=interval,
-                ingestion_timestamp=ingestion_timestamp,
+                ingestion_timestamp=ingestion_timestamp_str,
             )
 
             # Write
