@@ -3,10 +3,10 @@
 ## AI Usage
 
 **Approach:**
-AI was used strategically for boilerplate acceleration, not core architecture. My domain experience with data pipelines constrained and validated every AI suggestion—if it didn't align with production patterns I've seen, it was discarded.
+AI was used strategically for boilerplate/template acceleration, repetitive tasks like documentation etc . My domain experience with data pipelines constrained and validated every AI suggestion—if it didn't align with production patterns I've seen, it was discarded.
 
 **Specifically:**
-- **AI-assisted boilerplate:** Pydantic schemas, async HTTP client scaffolding, test fixtures, file I/O patterns. These are well-established patterns; AI provided syntax speed.
+- **AI-assisted boilerplate:** Pydantic schemas, async HTTP client scaffolding, test fixtures, file I/O patterns. These are well-established patterns; AI provided syntax speed. Initial templates created using AI constrained by input into architecture components I defined in prompt (ie, client, config manager, tests, writers, schemas etc).
 - **Documentation help:** The "boring" but critical things like Docstrings, argument descriptions, comments. Used Copilot autocomplete and Claude for concise phrasing, but reviewed for accuracy.
 - **Rejected AI suggestions:** Complex logic (state merging, retry strategies, error handling) where hallucinations/over-engineering would be inefficient/costly. These required deliberate design.
 - **"Mock Merge Reviews on code additions/changes:** Used Claude to review code changes for potential issues (edge cases, error handling gaps, performance concerns). For example, after implementing the retry logic, asked Claude to identify weaknesses (e.g., "what if all 6 locations fail simultaneously?"). This caught the need for aggregated error reporting in PipelineResult. However, final decisions on fixes were mine—AI suggested patterns, I validated against production experience + secondary research.
