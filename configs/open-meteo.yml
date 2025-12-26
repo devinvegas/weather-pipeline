@@ -2,12 +2,28 @@
 
 # API Settings
 api:
-  provider: "open_meteo"  # Changed: name -> provider
+  provider: "open_meteo"  
   base_url: "https://api.open-meteo.com/v1/forecast"
-  timeout: 30  # Changed: timeout_seconds -> timeout
+  timeout: 30  
   max_concurrent_requests: 5
 
-# Locations (moved to top level)
+# Forecast configuration 
+interval: "hourly"  # Accepts "hourly" or "daily"
+forecast_days: 7  
+timezone: "GMT"  
+
+# Variables 
+hourly_params:  # 
+  - "temperature_2m"
+  - "precipitation"
+  - "windspeed_10m"
+
+daily_params:  
+  - "temperature_2m_max"
+  - "temperature_2m_min"
+  - "precipitation_sum"
+
+# Locations 
 locations:
   - name: "London"
     latitude: 51.5074
@@ -27,19 +43,4 @@ locations:
   - name: "Rio de Janeiro"
     latitude: -22.9068
     longitude: -43.1729
-
-# Forecast configuration (flattened to match PipelineConfig)
-interval: "daily"  # Changed: removed forecast.intervals, use single value
-forecast_days: 7  # Changed: forecast.days -> forecast_days
-timezone: "GMT"  # Changed: forecast.timezone -> timezone
-
-# Variables (flattened)
-hourly_params:  # Changed: forecast.variables.hourly -> hourly_params
-  - "temperature_2m"
-  - "precipitation"
-  - "windspeed_10m"
-
-daily_params:  # Changed: forecast.variables.daily -> daily_params
-  - "temperature_2m_max"
-  - "temperature_2m_min"
-  - "precipitation_sum"
+    

@@ -4,7 +4,7 @@
 storage:
   backend: "local"
   base_path: "./data"
-  compression: "zstd" # Options: "none", "gzip", "zstd" - zstd offers good balance
+  compression: "zstd" # Options: "snappy", "gzip", "zstd" - zstd offers good balance for speed and compression
 
 # Timezone
 timezone: "GMT"
@@ -13,3 +13,4 @@ timezone: "GMT"
 api:
   max_retries: 3           # Number of retry attempts for transient failures
   retry_backoff_factor: 2.0  # Exponential backoff multiplier (waits 1s, 2s, 4s...)
+  

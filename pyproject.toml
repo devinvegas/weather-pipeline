@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weather-pipeline"
+version = "0.1.0"
+description = "Weather data ingestion pipeline using OpenMeteo API with Parquet storage"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "Shamari", email = "engineer@example.com"}
+]
+keywords = ["weather", "api", "data-pipeline", "parquet", "async"]
+classifiers = [
+    "Development Status :: 4 - Tech Assessment",
+    "Intended Audience :: Nanook",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "httpx>=0.24.0",
+    "polars>=0.20.0",
+    "pydantic>=2.5.0",
+    "pyyaml>=6.0",
+    "duckdb>=0.9.0",
+    "apscheduler>=3.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.setuptools]
+packages = ["weather_pipeline"]
+
+[tool.pytest.ini_options]
+testpaths = ["weather_pipeline/tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["weather_pipeline"]
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

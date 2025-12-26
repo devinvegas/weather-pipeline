@@ -11,7 +11,7 @@ class LocationFetchState(BaseModel):
 
     location_name: str
     provider: str
-    interval: str  # "hourly" or "daily"
+    interval: str  
 
     # Status tracking
     last_fetch_timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -20,7 +20,7 @@ class LocationFetchState(BaseModel):
 
     # Data tracking
     records_fetched: int = 0
-    forecast_end_date: str | None = None  # YYYY-MM-DD of latest forecast data
+    forecast_end_date: str | None = None  
 
     class Config:
         json_encoders = {datetime: lambda v: v.isoformat()}
